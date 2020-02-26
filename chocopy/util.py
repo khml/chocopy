@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import readline
+import pprint
 
 from chocopy.completer import Completer
 
@@ -37,11 +38,18 @@ def interactive(functions: list):
 
     while True:
         command = input("> ").strip()
+
         if command == "exit":
             exit()
 
         func, ok = find_func(command, table)
-        if ok:
-            print(func())
-        else:
+
+        if not ok:
             print("not found : {}".format(command))
+            continue
+
+        try:
+            pprint.pprint(func())
+        except Exception as e:
+            print("Failed to exec command : {}".format(command))
+            pprint.pprint(e)
