@@ -2,6 +2,8 @@
 
 import readline
 
+from chocopy.completer import Completer
+
 
 def arg_names(func: callable):
     return func.__code__.co_varnames[:func.__code__.co_argcount]
@@ -26,9 +28,12 @@ def find_func(func_name: str, func_table: dict) -> list:
 
 def interactive(functions: list):
     table = make_func_table(functions)
+    func_names = list(table.keys())
+    func_names.extend(["exit"])
 
     readline.parse_and_bind('tab: complete')
     readline.parse_and_bind('set editing-mode vi')
+    readline.set_completer(Completer(func_names).complete)
 
     while True:
         command = input("> ").strip()
