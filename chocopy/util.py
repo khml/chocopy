@@ -1,6 +1,10 @@
 # -*- coding:utf-8 -*-
 
 
+def arg_names(func: callable):
+    return func.__code__.co_varnames[:func.__code__.co_argcount]
+
+
 def make_func_table(functions: list) -> dict:
     """
     :param functions: List[callable]
@@ -30,4 +34,4 @@ def interactive(functions: list):
         if ok:
             print(func())
         else:
-            print("not found : {}",format(command))
+            print("not found : {}".format(command))
