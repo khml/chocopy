@@ -44,7 +44,7 @@ def interactive(functions):
         raise TypeError
 
     func_names = list(table.keys())
-    func_names.extend(["exit"])
+    func_names.extend(["exit", "help"])
 
     readline.parse_and_bind('tab: complete')
     readline.parse_and_bind('set editing-mode vi')
@@ -55,6 +55,10 @@ def interactive(functions):
 
         if command == "exit":
             exit()
+
+        if command == "help":
+            [print(name) for name in func_names]
+            continue
 
         func, ok = find_func(command, table)
 
