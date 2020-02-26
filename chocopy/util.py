@@ -30,4 +30,4 @@ def interactive(functions: list):
         if ok:
             print(func())
         else:
-            print("not found : {}",format(command))
+            print("not found : {}".format(command))
