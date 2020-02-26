@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
 
+import readline
+
 
 def arg_names(func: callable):
     return func.__code__.co_varnames[:func.__code__.co_argcount]
@@ -24,6 +26,9 @@ def find_func(func_name: str, func_table: dict) -> list:
 
 def interactive(functions: list):
     table = make_func_table(functions)
+
+    readline.parse_and_bind('tab: complete')
+    readline.parse_and_bind('set editing-mode vi')
 
     while True:
         command = input("> ").strip()
