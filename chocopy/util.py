@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 
 import readline
+import pprint
+from collections import OrderedDict
 
 from chocopy.completer import Completer
 
@@ -14,7 +16,10 @@ def make_func_table(functions: list) -> dict:
     :param functions: List[callable]
     :return:
     """
-    return {func.__name__: func for func in functions}
+    table = OrderedDict()
+    for func in functions:
+        table[func.__name__] = func
+    return table
 
 
 def find_func(func_name: str, func_table: dict) -> list:
@@ -26,8 +31,18 @@ def find_func(func_name: str, func_table: dict) -> list:
     return [func, True]
 
 
-def interactive(functions: list):
-    table = make_func_table(functions)
+def interactive(functions):
+    """
+    :param functions: list or dict
+    :return:
+    """
+    if isinstance(functions, list):
+        table = make_func_table(functions)
+    elif isinstance(functions, dict):
+        table = functions
+    else:
+        raise TypeError
+
     func_names = list(table.keys())
     func_names.extend(["exit"])
 
@@ -37,11 +52,18 @@ def interactive(functions: list):
 
     while True:
         command = input("> ").strip()
+
         if command == "exit":
             exit()
 
         func, ok = find_func(command, table)
-        if ok:
-            print(func())
-        else:
+
+        if not ok:
             print("not found : {}".format(command))
+            continue
+
+        try:
+            pprint.pprint(func())
+        except Exception as e:
+            print("Failed to exec command : {}".format(command))
+            pprint.pprint(e)
