@@ -71,26 +71,14 @@ class InteractiveShell:
         self._table = table
 
         self._table['exit'] = exit
-        self._table['eval'] = self._eval
         self._commands = list(self._table.keys())
-        self._commands.extend(['help', 'result', 'return'])
+        self._commands.extend(['help', 'result', 'return', 'eval', 'exec'])
 
     def _help(self):
         [print(name) for name in self._commands]
 
     def _print_return_value(self):
         pprint.pprint(self._return_value)
-
-    def _eval(self):
-        _return_value = None
-        while True:
-            command = str(input('eval > '))
-            if command == 'return':
-                return _return_value
-            try:
-                _return_value = eval(command)
-            except Exception as e:
-                print(e)
 
     def run(self):
         while True:
@@ -102,6 +90,25 @@ class InteractiveShell:
 
             if command == 'result':
                 self._print_return_value()
+                continue
+
+            if command == 'eval':
+                while True:
+                    command = str(input('eval > '))
+                    if command in ['return', 'exit']:
+                        break
+                    try:
+                        self._return_value = eval(command)
+                        self._print_return_value()
+                    except Exception as e:
+                        print(e)
+                continue
+
+            if command == 'exec':
+                try:
+                    exec(str(input('exec > ')))
+                except Exception as e:
+                    print(e)
                 continue
 
             func, ok = find_func(command, self._table)
