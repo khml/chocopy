@@ -43,8 +43,10 @@ def interactive(functions):
     else:
         raise TypeError
 
+    table['exit'] = exit
+
     func_names = list(table.keys())
-    func_names.extend(["exit", "help"])
+    func_names.extend(['exit', 'help'])
 
     readline.parse_and_bind('tab: complete')
     readline.parse_and_bind('set editing-mode vi')
@@ -53,10 +55,7 @@ def interactive(functions):
     while True:
         command = input("> ").strip()
 
-        if command == "exit":
-            exit()
-
-        if command == "help":
+        if command == 'help':
             [print(name) for name in func_names]
             continue
 
