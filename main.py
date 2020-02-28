@@ -24,7 +24,7 @@ def func5():
 
 
 def main():
-    chocopy.interactive([func1, func2, func3, func4, func5])
+    chocopy.InteractiveShell([func1, func2, func3, func4, func5]).run()
 
 
 if __name__ == '__main__':
