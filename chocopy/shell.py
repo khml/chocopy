@@ -54,6 +54,7 @@ class InteractiveShell:
     def __init__(self, functions, completer=None):
         self._table = {}
         self._commands = []
+        self._return_value = None
         self._make_table(functions)
 
         self._completer = completer or Completer(self._commands).complete
@@ -71,10 +72,13 @@ class InteractiveShell:
 
         self._table['exit'] = exit
         self._commands = list(self._table.keys())
-        self._commands.append('help')
+        self._commands.extend(['help', 'result'])
 
     def _help(self):
         [print(name) for name in self._commands]
+
+    def _print_return_value(self):
+        pprint.pprint(self._return_value)
 
     def run(self):
         while True:
@@ -84,6 +88,10 @@ class InteractiveShell:
                 self._help()
                 continue
 
+            if command == 'result':
+                self._print_return_value()
+                continue
+
             func, ok = find_func(command, self._table)
 
             if not ok:
@@ -91,7 +99,8 @@ class InteractiveShell:
                 continue
 
             try:
-                pprint.pprint(func())
+                self._return_value = func()
+                self._print_return_value()
             except Exception as e:
                 print("Failed to exec command : {}".format(command))
                 pprint.pprint(e)
