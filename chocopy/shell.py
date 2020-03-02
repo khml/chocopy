@@ -71,55 +71,46 @@ class InteractiveShell:
         self._table = table
 
         self._table['exit'] = exit
+        self._table['help'] = self._help
+        self._table['result'] = self._result
         self._commands = list(self._table.keys())
-        self._commands.extend(['help', 'result', 'return', 'eval', 'exec'])
 
     def _help(self):
         [print(name) for name in self._commands]
 
     def _print_return_value(self):
+        if self._return_value is None:
+            return
         pprint.pprint(self._return_value)
+
+    def _result(self):
+        return self._return_value
+
+    def _exec_command(self, func, command):
+        try:
+            self._return_value = func()
+            if command == 'help':
+                return
+            print(self._return_value)
+        except Exception as e:
+            print("Failed to exec command : {}".format(command))
+            pprint.pprint(e)
 
     def run(self):
         while True:
-            command = input('> ').strip()
-
-            if command == 'help':
-                self._help()
-                continue
-
-            if command == 'result':
-                self._print_return_value()
-                continue
-
-            if command == 'eval':
-                while True:
-                    command = str(input('eval > '))
-                    if command in ['return', 'exit']:
-                        break
-                    try:
-                        self._return_value = eval(command)
-                        self._print_return_value()
-                    except Exception as e:
-                        print(e)
-                continue
-
-            if command == 'exec':
-                try:
-                    exec(str(input('exec > ')))
-                except Exception as e:
-                    print(e)
-                continue
+            command = input('>>> ').strip()
 
             func, ok = find_func(command, self._table)
-
-            if not ok:
-                print("not found : {}".format(command))
+            if ok:
+                self._exec_command(func, command)
                 continue
 
             try:
-                self._return_value = func()
-                self._print_return_value()
+                self._return_value = eval(command)
             except Exception as e:
-                print("Failed to exec command : {}".format(command))
-                pprint.pprint(e)
+                try:
+                    self._return_value = exec(command)
+                except Exception as e:
+                    print(e)
+                    continue
+            self._print_return_value()
