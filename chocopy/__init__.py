@@ -2,4 +2,4 @@
 
 from chocopy.util import make_func_table, find_func
 from chocopy.completer import Completer
-from chocopy.shell import interactive, InteractiveShell
+from chocopy.shell import InteractiveShell
